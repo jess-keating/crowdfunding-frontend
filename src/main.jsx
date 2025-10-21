@@ -5,9 +5,12 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage.jsx";
 import FundraiserPage from "./pages/FundraiserPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
+import AboutPage from "./pages/AboutPage.jsx";
+import ContactPage from "./pages/ContactPage.jsx";
 
 import NavBar from "./components/NavBar.jsx";
 import { AuthProvider } from "./components/AuthProvider.jsx";
+import "./index.css";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +19,8 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/login", element: <LoginPage /> },
+      { path: "/about", element: <AboutPage /> },
+      { path: "/contact", element: <ContactPage /> },
       { path: "/fundraiser/:id", element: <FundraiserPage /> },
     ],
   },
@@ -24,8 +29,10 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
-    {/* Here we wrap our app in the router provider so they render */}
-    <RouterProvider router={router} />
-  </AuthProvider>
+      <div className="app-container">
+        {/* Here we wrap our app in the router provider so they render */}
+        <RouterProvider router={router} />
+      </div>
+    </AuthProvider>
   </React.StrictMode>
 );
