@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import postSignup from "../api/post-signup";
+import postLogin from "../api/post-login";
 
 function SignupForm() {
 const navigate = useNavigate();
@@ -14,6 +15,7 @@ const [formData, setFormData] = useState({
 });
 
 const [error, setError] = useState(null);
+const [loading, setLoading] = useState(false);
 
 const handleChange = (event) => {
     const { id, value } = event.target;
@@ -23,23 +25,36 @@ const handleChange = (event) => {
     }));
 };
 
-const handleSubmit = (event) => {
+const handleSubmit = async (event) => {
     event.preventDefault();
     setError(null);
 
-    if (formData.username && formData.password && formData.email) {
-    postSignup(formData.username, formData.password, formData.email)
-        .then((response) => {
-        console.log("Signup successful:", response);
-          // Redirect to login so they can sign in
-        navigate("/login");
-        })
-        .catch((err) => {
-        console.error("Signup failed:", err);
-        setError(err.message);
-        });
-    } else {
+    if (!formData.username || !formData.password || !formData.email || !formData.firstname || !formData.lastname) {
     setError("All fields are required");
+    return;
+    }
+
+    setLoading(true);
+
+    try {
+      // 1️⃣ Create the new account
+    await postSignup(formData.username, formData.password, formData.email);
+
+      // 2️⃣ Immediately log the user in using the same credentials
+    const loginResponse = await postLogin(formData.username, formData.password);
+
+      // 3️⃣ Save the token to localStorage
+    window.localStorage.setItem("token", loginResponse.token);
+
+      // 4️⃣ Optional success message, then redirect
+    alert("Signup successful! You’re now logged in.");
+    navigate("/");
+
+    } catch (err) {
+    console.error("Signup or login failed:", err);
+    setError(err.message || "Something went wrong. Please try again.");
+    } finally {
+    setLoading(false);
     }
 };
 
