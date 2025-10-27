@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import HomePage from "./pages/HomePage.jsx";
 import FundraiserPage from "./pages/FundraiserPage.jsx";
+import CreateFundraiserPage from "./pages/CreateFundraiserPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 import ContactPage from "./pages/ContactPage.jsx";
@@ -20,10 +21,11 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/login", element: <LoginPage /> },
+      { path: "/signup", element: <SignupPage /> },
       { path: "/about", element: <AboutPage /> },
       { path: "/contact", element: <ContactPage /> },
       { path: "/fundraiser/:id", element: <FundraiserPage /> },
-      { path: "/signup", element: <SignupPage /> },
+      { path: "/create-fundraiser", element: <CreateFundraiserPage /> },
     ],
   },
 ]);

@@ -10,8 +10,8 @@ const [formData, setFormData] = useState({
     username: "",
     password: "",
     email: "",
-    firstname: "",
-    lastname: "",
+    first_name: "",
+    last_name: "",
 });
 
 const [error, setError] = useState(null);
@@ -29,7 +29,7 @@ const handleSubmit = async (event) => {
     event.preventDefault();
     setError(null);
 
-    if (!formData.username || !formData.password || !formData.email || !formData.firstname || !formData.lastname) {
+    if (!formData.username || !formData.password || !formData.email || !formData.first_name || !formData.last_name) {
     setError("All fields are required");
     return;
     }
@@ -38,7 +38,7 @@ const handleSubmit = async (event) => {
 
     try {
       // 1️⃣ Create the new account
-    await postSignup(formData.username, formData.password, formData.email);
+    await postSignup(formData.username, formData.password, formData.email, formData.first_name, formData.last_name);
 
       // 2️⃣ Immediately log the user in using the same credentials
     const loginResponse = await postLogin(formData.username, formData.password);
@@ -75,20 +75,20 @@ return (
     </div>
 
     <div>
-        <label htmlFor="firstname">First Name:</label>
+        <label htmlFor="first_name">First Name:</label>
         <input
         type="text"
-        id="firstname"
+        id="first_name"
         placeholder="Enter first name"
         onChange={handleChange}
         />
     </div>
 
     <div>
-        <label htmlFor="lastname">Last Name:</label>
+        <label htmlFor="last_name">Last Name:</label>
         <input
         type="text"
-        id="lastname"
+        id="last_name"
         placeholder="Enter last name"
         onChange={handleChange}
         />
@@ -118,5 +118,4 @@ return (
     </form>
 );
 }
-
 export default SignupForm;
