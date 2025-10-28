@@ -1,0 +1,16 @@
+.error-message {
+color: #c0392b;
+background: #f9d6d5;
+padding: 0.5rem;
+border-radius: 6px;
+}
+
+.success-message {
+color: #2e7d32;
+background: #e6f4ea;
+padding: 0.5rem;
+border-radius: 6px;
+}
+.form-group {
+margin-bottom: 12px;
+}
