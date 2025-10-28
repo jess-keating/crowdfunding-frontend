@@ -4,7 +4,7 @@ function AboutPage() {
       <h1>About</h1>
       <p>
         This is a small demo crowdfunding app built as a learning project. It
-        demonstrates fetching data, routing, and basic CRUD patterns.
+        demonstrates fetching data, routing, and basic Create, Read, Update, and Delete (CRUD) patterns.
       </p>
     </div>
   );

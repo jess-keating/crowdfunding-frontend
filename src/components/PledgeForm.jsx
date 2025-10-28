@@ -27,13 +27,14 @@ function PledgeForm({ fundraiserId, onSuccess }) {
         }
 
         try {
-            await createPledge({ ...formData, fundraiser: fundraiserId });
+            const newPledge = await createPledge({ ...formData, fundraiser: fundraiserId });
             setFormData({ amount: "", comment: "", anonymous: false });
-            if (onSuccess) onSuccess();
+            if (onSuccess) onSuccess(newPledge); // ✅ Pass new pledge object up
         } catch {
-            // errors handled by hook
+            // handled by hook
         }
     };
+
 
     return (
         <form onSubmit={handleSubmit} className="pledge-form">
