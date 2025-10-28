@@ -5,118 +5,134 @@ import postLogin from "../api/post-login";
 import "./AuthForm.css";
 
 function SignupForm() {
-const navigate = useNavigate();
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        username: "",
+        password: "",
+        email: "",
+        first_name: "",
+        last_name: "",
+    });
 
-const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    email: "",
-    first_name: "",
-    last_name: "",
-});
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-const [error, setError] = useState(null);
-const [loading, setLoading] = useState(false);
+    const handleChange = (event) => {
+        const { id, value } = event.target;
+        setFormData((prevData) => ({ ...prevData, [id]: value }));
+    };
 
-const handleChange = (event) => {
-    const { id, value } = event.target;
-    setFormData((prevData) => ({
-    ...prevData,
-    [id]: value,
-    }));
-};
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setError(null);
 
-const handleSubmit = async (event) => {
-    event.preventDefault();
-    setError(null);
+        // ✅ Basic validation
+        for (let field of ["username", "password", "email", "first_name", "last_name"]) {
+            if (!formData[field].trim()) {
+                setError("All fields are required.");
+                return;
+            }
+        }
 
-    if (!formData.username || !formData.password || !formData.email || !formData.first_name || !formData.last_name) {
-    setError("All fields are required");
-    return;
-    }
+        setLoading(true);
 
-    setLoading(true);
+        try {
+            // ✅ Step 1: Create new user
+            await postSignup(formData);
 
-    try {
-      // 1️⃣ Create the new account
-    await postSignup(formData.username, formData.password, formData.email, formData.first_name, formData.last_name);
+            // ✅ Step 2: Immediately log in
+            const loginResponse = await postLogin(formData.username, formData.password);
 
-      // 2️⃣ Immediately log the user in using the same credentials
-    const loginResponse = await postLogin(formData.username, formData.password);
+            // ✅ Step 3: Store token
+            window.localStorage.setItem("token", loginResponse.token);
 
-      // 3️⃣ Save the token to localStorage
-    window.localStorage.setItem("token", loginResponse.token);
+            // ✅ Step 4: Success feedback
+            alert("Signup successful! You’re now logged in.");
+            navigate("/");
+        } catch (err) {
+            console.error("Signup or login failed:", err);
+            const msg =
+                err.serverData?.detail ||
+                err.serverData?.error ||
+                err.message ||
+                "Signup failed. Please try again.";
+            setError(msg);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-      // 4️⃣ Optional success message, then redirect
-    alert("Signup successful! You’re now logged in.");
-    navigate("/");
+    return (
+        <form onSubmit={handleSubmit} className="auth-form">
+            <h2>Create an Account</h2>
 
-    } catch (err) {
-    console.error("Signup or login failed:", err);
-    setError(err.message || "Something went wrong. Please try again.");
-    } finally {
-    setLoading(false);
-    }
-};
+            {error && <p className="error-message">{error}</p>}
 
-return (
-    <form onSubmit={handleSubmit}>
-    <h2>Create an Account</h2>
+            <div>
+                <label htmlFor="username">Username:</label>
+                <input
+                    id="username"
+                    type="text"
+                    placeholder="Enter username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    disabled={loading}
+                />
+            </div>
 
-    {error && <p style={{ color: "red" }}>{error}</p>}
+            <div>
+                <label htmlFor="first_name">First Name:</label>
+                <input
+                    id="first_name"
+                    type="text"
+                    placeholder="Enter first name"
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    disabled={loading}
+                />
+            </div>
 
-    <div>
-        <label htmlFor="username">Username:</label>
-        <input
-        type="text"
-        id="username"
-        placeholder="Enter username"
-        onChange={handleChange}
-        />
-    </div>
+            <div>
+                <label htmlFor="last_name">Last Name:</label>
+                <input
+                    id="last_name"
+                    type="text"
+                    placeholder="Enter last name"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    disabled={loading}
+                />
+            </div>
 
-    <div>
-        <label htmlFor="first_name">First Name:</label>
-        <input
-        type="text"
-        id="first_name"
-        placeholder="Enter first name"
-        onChange={handleChange}
-        />
-    </div>
+            <div>
+                <label htmlFor="email">Email:</label>
+                <input
+                    id="email"
+                    type="email"
+                    placeholder="Enter email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    disabled={loading}
+                />
+            </div>
 
-    <div>
-        <label htmlFor="last_name">Last Name:</label>
-        <input
-        type="text"
-        id="last_name"
-        placeholder="Enter last name"
-        onChange={handleChange}
-        />
-    </div>
+            <div>
+                <label htmlFor="password">Password:</label>
+                <input
+                    id="password"
+                    type="password"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    disabled={loading}
+                />
+            </div>
 
-    <div>
-        <label htmlFor="email">Email:</label>
-        <input
-        type="email"
-        id="email"
-        placeholder="Enter email"
-        onChange={handleChange}
-        />
-    </div>
-
-    <div>
-        <label htmlFor="password">Password:</label>
-        <input
-        type="password"
-        id="password"
-        placeholder="Password"
-        onChange={handleChange}
-        />
-    </div>
-
-    <button type="submit">Sign Up</button>
-    </form>
-);
+            <button type="submit" disabled={loading}>
+                {loading ? "Creating Account..." : "Sign Up"}
+            </button>
+        </form>
+    );
 }
+
 export default SignupForm;

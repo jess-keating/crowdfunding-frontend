@@ -1,29 +1,38 @@
-async function postSignup(username, password, email) {
+// src/api/post-signup.js
+async function postSignup(userData) {
 const url = `${import.meta.env.VITE_API_URL}/users/`;
+
+console.log("Sending signup request to:", url);
+console.log("With data:", userData);
 
 const response = await fetch(url, {
     method: "POST",
-    headers: {
-    "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-    username: username,
-    password: password,
-    email: email,
-    }),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(userData),
 });
 
-if (!response.ok) {
-    const fallbackError = "Error creating new account";
-    const data = await response.json().catch(() => {
-    throw new Error(fallbackError);
-    });
+const responseText = await response.text();
 
-    const errorMessage = data?.detail ?? fallbackError;
-    throw new Error(errorMessage);
+let data;
+try {
+    data = JSON.parse(responseText);
+} catch {
+    data = { detail: responseText };
 }
 
-return await response.json();
+if (!response.ok) {
+    const fallbackError = `HTTP ${response.status}: Error creating new account`;
+    const error = new Error(data?.detail || fallbackError);
+    error.response = {
+    status: response.status,
+    statusText: response.statusText,
+    data: data,
+    };
+    error.serverData = data;
+    throw error;
+}
+
+return data;
 }
 
 export default postSignup;

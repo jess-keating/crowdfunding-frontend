@@ -2,7 +2,7 @@ import SignupForm from "../components/SignupForm";
 
 function SignupPage() {
   return (
-    <div>
+    <div className="page-wrap">
       <SignupForm />
     </div>
   );
