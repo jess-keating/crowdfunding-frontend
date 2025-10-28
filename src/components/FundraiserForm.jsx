@@ -1,7 +1,7 @@
 import { useState } from "react";
-import postFundraiser from "../api/post-fundraiser";
+import useCreateFundraiser from "../hooks/use-create-fundraiser";
 
-function FundraiserForm({ onSuccess, onError }) {
+function FundraiserForm({ onSuccess }) {
     const [formData, setFormData] = useState({
         title: "",
         description: "",
@@ -10,82 +10,64 @@ function FundraiserForm({ onSuccess, onError }) {
         is_open: true,
     });
 
-    const [errors, setErrors] = useState({});
-    const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(null);
+    const [validationErrors, setValidationErrors] = useState({});
+    const { createFundraiser, isLoading, error, success } = useCreateFundraiser();
 
-    // Validation helper
     const validateForm = () => {
         const newErrors = {};
         if (!formData.title.trim()) newErrors.title = "Title is required.";
         if (!formData.description.trim()) newErrors.description = "Description is required.";
-        if (!formData.goal) newErrors.goal = "Goal is required.";
-        else if (Number(formData.goal) <= 0) newErrors.goal = "Goal must be a positive number.";
+        if (!formData.goal) newErrors.goal = "Goal amount is required.";
+        else if (Number(formData.goal) <= 0) newErrors.goal = "Goal must be positive.";
         if (!formData.image.trim()) newErrors.image = "Image URL is required.";
-        else if (!/^https?:\/\//i.test(formData.image)) newErrors.image = "Image URL must start with http:// or https://";
-        setErrors(newErrors);
+        else if (!/^https?:\/\//i.test(formData.image)) newErrors.image = "Must start with http:// or https://";
+        setValidationErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleChange = (event) => {
-        const { id, value } = event.target;
+    const handleChange = (e) => {
+        const { id, value } = e.target;
         setFormData((prev) => ({ ...prev, [id]: value }));
-        setErrors((prev) => ({ ...prev, [id]: "" }));
     };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        setSuccess(null);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         if (!validateForm()) return;
 
-        const token = window.localStorage.getItem("token");
-        if (!token) {
-            setErrors({ submit: "You must be logged in to create a fundraiser." });
-            if (onError) onError("Not logged in.");
-            return;
-        }
-
-        setLoading(true);
-
         try {
-            const newFundraiser = await postFundraiser(formData);
-            setSuccess("🎉 Fundraiser created successfully!");
-            setFormData({ title: "", description: "", goal: "", image: "", is_open: true });
+            const newFundraiser = await createFundraiser(formData);
             if (onSuccess) onSuccess(newFundraiser);
-        } catch (err) {
-            console.error("Error creating fundraiser:", err);
-            setErrors({ submit: err.message || "Failed to create fundraiser. Please try again." });
-            if (onError) onError(err.message);
-        } finally {
-            setLoading(false);
+            setFormData({ title: "", description: "", goal: "", image: "", is_open: true });
+        } catch {
+            // errors handled inside the hook
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="fundraiser-form">
+        <form onSubmit={handleSubmit}>
             <h2>Create a Fundraiser</h2>
 
-            {errors.submit && <p style={{ color: "red" }}>{errors.submit}</p>}
+            {error && <p style={{ color: "red" }}>{error}</p>}
             {success && <p style={{ color: "green" }}>{success}</p>}
 
-            <label htmlFor="title">Title *</label>
+            <label>Title *</label>
             <input id="title" value={formData.title} onChange={handleChange} />
-            {errors.title && <p className="error">{errors.title}</p>}
+            {validationErrors.title && <p style={{ color: "red" }}>{validationErrors.title}</p>}
 
-            <label htmlFor="description">Description *</label>
+            <label>Description *</label>
             <textarea id="description" value={formData.description} onChange={handleChange} />
-            {errors.description && <p className="error">{errors.description}</p>}
+            {validationErrors.description && <p style={{ color: "red" }}>{validationErrors.description}</p>}
 
-            <label htmlFor="goal">Goal Amount ($) *</label>
+            <label>Goal ($) *</label>
             <input id="goal" type="number" value={formData.goal} onChange={handleChange} />
-            {errors.goal && <p className="error">{errors.goal}</p>}
+            {validationErrors.goal && <p style={{ color: "red" }}>{validationErrors.goal}</p>}
 
-            <label htmlFor="image">Image URL *</label>
+            <label>Image URL *</label>
             <input id="image" type="url" value={formData.image} onChange={handleChange} />
-            {errors.image && <p className="error">{errors.image}</p>}
+            {validationErrors.image && <p style={{ color: "red" }}>{validationErrors.image}</p>}
 
-            <button type="submit" disabled={loading}>
-                {loading ? "Creating..." : "Create Fundraiser"}
+            <button type="submit" disabled={isLoading}>
+                {isLoading ? "Creating..." : "Create Fundraiser"}
             </button>
         </form>
     );
