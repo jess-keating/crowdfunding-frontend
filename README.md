@@ -55,18 +55,6 @@ The app helps bring local productions and events to life by connecting organiser
 - **Backend API:** Django REST Framework (Heroku Deployment)  
 - **Deployment:** Netlify  
 
-### Folder Structure
-src/
-├── components/ # Reusable UI components
-├── pages/ # Individual page components (Home, FundraiserPage, etc.)
-├── hooks/ # Custom hooks (e.g. useFundraiser, useAuth)
-├── context/ # Global AuthContext for user state
-├── assets/ # Images and static files
-├── App.jsx # Root app component with routing
-├── main.jsx # Entry point for ReactDOM
-└── styles.css # Base styling
-
-
 ---
 
 ## Front End Pages & Functionality

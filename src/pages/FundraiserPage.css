@@ -1,33 +1,48 @@
 .page-wrap {
-padding: 0.5rem 0;
+    padding: 0.5rem 0;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Page title */
+.page-wrap h2 {
+    color: var(--accent);
 }
 
 .fundraiser-grid {
-display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Changed auto-fit to auto-fill */
-gap: 1.5rem;
-  align-items: stretch; /* Makes all cards same height */
-margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    /* Changed auto-fit to auto-fill */
+    gap: 1.5rem;
+    align-items: stretch;
+    /* Makes all cards same height */
+    margin-top: 1rem;
 }
 
+/* Hero image */
 .fundraiser-image {
-max-width: 400px;
-border-radius: 8px;
-margin: 1em 0;
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    margin: var(--spacing-lg) 0;
+    display: block;
+    box-shadow: var(--shadow);
 }
 
 .progress-container {
-width: 100%;
-background-color: #eee;
-border-radius: 6px;
-margin: 10px 0;
+    width: 100%;
+    background-color: #e5e7eb;
+    border-radius: var(--radius);
+    margin: var(--spacing-md) 0;
+    overflow: hidden;
 }
 
 .progress-bar {
-height: 12px;
-background-color: #4caf50;
-border-radius: 6px;
-transition: width 0.4s ease;
+    height: 12px;
+    background-color: var(--success);
+    border-radius: var(--radius);
+    transition: width 0.4s ease;
 }
 
 .fundraiser-card {
@@ -38,7 +53,8 @@ transition: width 0.4s ease;
     display: flex;
     flex-direction: column;
     transition: transform .14s ease, box-shadow .14s ease;
-    height: 100%; /* Ensures all cards stretch to same height */
+    height: 100%;
+    /* Ensures all cards stretch to same height */
 }
 
 .fundraiser-card:hover {
@@ -58,17 +74,20 @@ transition: width 0.4s ease;
 /* Card media - fixed aspect ratio */
 .card-media {
     width: 100%;
-    height: 200px; /* Fixed height for consistency */
+    height: 200px;
+    /* Fixed height for consistency */
     background: linear-gradient(180deg, #f0f2f5, #e9eef6);
     display: block;
     overflow: hidden;
-    flex-shrink: 0; /* Prevents image from shrinking */
+    flex-shrink: 0;
+    /* Prevents image from shrinking */
 }
 
 .card-media img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Crops to fill container */
+    object-fit: cover;
+    /* Crops to fill container */
     display: block;
 }
 
@@ -78,7 +97,8 @@ transition: width 0.4s ease;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    flex: 1; /* Takes remaining space */
+    flex: 1;
+    /* Takes remaining space */
 }
 
 .card-body h3 {
@@ -111,20 +131,90 @@ transition: width 0.4s ease;
 
 /* Responsive adjustments */
 @media (max-width: 640px) {
-.fundraiser-grid {
-    grid-template-columns: 1fr; /* Single column on mobile */
-    gap: 1rem;
-}
+    .fundraiser-grid {
+        grid-template-columns: 1fr;
+        /* Single column on mobile */
+        gap: 1rem;
+    }
 }
 
 @media (min-width: 641px) and (max-width: 900px) {
-.fundraiser-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablet */
-}
+    .fundraiser-grid {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 columns on tablet */
+    }
 }
 
 @media (min-width: 901px) {
-.fundraiser-grid {
-    grid-template-columns: repeat(3, 1fr); /* 3 columns on desktop */
+    .fundraiser-grid {
+        grid-template-columns: repeat(3, 1fr);
+        /* 3 columns on desktop */
+    }
 }
+
+/* Fundraiser controls for owner/admin */
+.fundraiser-controls {
+    display: flex;
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    flex-wrap: wrap;
+}
+
+.fundraiser-controls button {
+    background: var(--accent);
+    /* Blue #2563eb */
+    color: white;
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.fundraiser-controls button:hover:not(:disabled) {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.fundraiser-controls button:disabled {
+    background: var(--muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.fundraiser-controls a {
+    text-decoration: none;
+}
+
+/* Pledges list */
+.fundraiser-page ul {
+    list-style: none;
+    padding: 0;
+}
+
+.fundraiser-page li {
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.fundraiser-page li:last-child {
+    border-bottom: none;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .fundraiser-image {
+        height: 250px;
+        margin: var(--spacing-md) 0;
+    }
+    
+    .fundraiser-controls {
+        flex-direction: column;
+    }
+    
+    .fundraiser-controls button {
+        width: 100%;
+    }
 }

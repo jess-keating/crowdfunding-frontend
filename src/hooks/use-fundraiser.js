@@ -1,26 +1,33 @@
-import { useState, useEffect } from "react";
-
+// src/hooks/use-fundraiser.js
+import { useState, useEffect, useCallback } from "react";
 import getFundraiser from "../api/get-fundraiser";
 
 export default function useFundraiser(fundraiserId) {
   const [fundraiser, setFundraiser] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState();
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    // Here we pass the fundraiserId to the getFundraiser function.
-    getFundraiser(fundraiserId)
-      .then((fundraiser) => {
-        setFundraiser(fundraiser);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setIsLoading(false);
-      });
+  // ✅ reusable fetch function
+  const fetchFundraiser = useCallback(async () => {
+    if (!fundraiserId) return;
+    setIsLoading(true);
+    setError(null);
 
-    // This time we pass the fundraiserId to the dependency array so that the hook will re-run if the fundraiserId changes.
+    try {
+      const data = await getFundraiser(fundraiserId);
+      setFundraiser(data);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
   }, [fundraiserId]);
 
-  return { fundraiser, isLoading, error };
+  // ✅ initial fetch on mount / id change
+  useEffect(() => {
+    fetchFundraiser();
+  }, [fetchFundraiser]);
+
+  // ✅ expose refetch for manual refresh
+  return { fundraiser, isLoading, error, refetch: fetchFundraiser };
 }
