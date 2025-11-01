@@ -6,7 +6,8 @@ function NavBar() {
 
     const handleLogout = () => {
         window.localStorage.removeItem("token");
-        setAuth({ token: null });
+        window.localStorage.removeItem("user");
+        setAuth({ token: null, user: null });
     };
 
     return (

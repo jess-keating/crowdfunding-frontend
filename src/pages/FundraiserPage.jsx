@@ -1,12 +1,14 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useFundraiser from "../hooks/use-fundraiser";
 import PledgeForm from "../components/PledgeForm";
+import { useAuth } from "../hooks/use-auth";
 import "./FundraiserPage.css";
 
 function FundraiserPage() {
     const { id } = useParams();
     const { fundraiser, isLoading, error } = useFundraiser(id);
+    const { auth } = useAuth(); 
     const [pledges, setPledges] = useState([]);
 
     // When fundraiser loads, store pledges locally
@@ -18,10 +20,9 @@ function FundraiserPage() {
 
     // Handle new pledge creation without page refresh
     const handlePledgeSuccess = (newPledge) => {
-        setPledges((prev) => [newPledge, ...prev]); // add to the top
+        setPledges((prev) => [newPledge, ...prev]);
     };
 
-    // ✅ Add this: defines totals and progressPercent safely
     let totalPledged = 0;
     let progressPercent = 0;
 
@@ -45,7 +46,6 @@ function FundraiserPage() {
                 className="fundraiser-image"
             />
 
-            {/* ✅ Progress bar */}
             <div className="progress-container">
                 <div
                     className="progress-bar"
@@ -59,10 +59,16 @@ function FundraiserPage() {
 
             <p><strong>Fundraiser Description:</strong> {fundraiser.description}</p>
             <h3>Goal: ${fundraiser.goal}</h3>
+            
+            {/* Update button for owner only */}
+            {auth?.user?.id === fundraiser.owner && (
+                <Link to={`/fundraiser/${fundraiser.id}/update`}>
+                    <button className="button">Update Fundraiser</button>
+                </Link>
+            )}
 
             <hr />
 
-            {/* ✅ Dynamic pledge list */}
             <h3>Pledges:</h3>
             {pledges.length > 0 ? (
                 <ul>
@@ -70,7 +76,7 @@ function FundraiserPage() {
                         <li key={pledge.id ?? `${pledge.supporter}-${pledge.amount}-${index}`}>
                             ${pledge.amount} from User:{" "}
                             {pledge.anonymous ? "Anonymous" : pledge.supporter}
-                            {pledge.comment && <span> — “{pledge.comment}”</span>}
+                            {pledge.comment && <span> — "{pledge.comment}"</span>}
                         </li>
                     ))}
                 </ul>
@@ -80,7 +86,6 @@ function FundraiserPage() {
 
             <hr />
 
-            {/* ✅ Corrected closing tag */}
             <PledgeForm fundraiserId={fundraiser.id} onSuccess={handlePledgeSuccess} />
         </div>
     );

@@ -7,7 +7,7 @@ import "./AuthForm.css";
 
 function LoginForm() {
     const navigate = useNavigate(); 
-    const {auth, setAuth} = useAuth();
+    const { setAuth } = useAuth();
     
     const [credentials, setCredentials] = useState({
         username: "",
@@ -29,9 +29,20 @@ function LoginForm() {
                 credentials.username,
                 credentials.password
             ).then((response) => {
+                const user = {
+                    id: response.user_id,
+                    email: response.email,
+                    username: credentials.username,
+                };
+                
+                // Save BOTH token and user to localStorage
                 window.localStorage.setItem("token", response.token);
+                window.localStorage.setItem("user", JSON.stringify(user));
+                
+                // Update auth context
                 setAuth({
                     token: response.token,
+                    user: user,
                 });
                 navigate("/");
             });
