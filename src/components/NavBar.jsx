@@ -1,8 +1,9 @@
 import { Link, Outlet } from "react-router-dom";
-import { useAuth } from "../hooks/use-auth.js";
+import { useAuth } from "../hooks/use-auth";
+import "./NavBar.css";
 
 function NavBar() {
-    const {auth, setAuth} = useAuth();
+    const { auth, setAuth } = useAuth();
 
     const handleLogout = () => {
         window.localStorage.removeItem("token");
@@ -11,23 +12,35 @@ function NavBar() {
     };
 
     return (
-        <div>
+        <>
             <nav>
-                <Link to="/">Home</Link>
-                <Link to="/about">About Us</Link>
+                <div className="nav-links">
+                    <Link to="/">Home</Link>
+                    <Link to="/about">About Us</Link>
+                    {auth.token ? (
+                        <>
+                            <Link to="/fundraiser/new">New Fundraiser</Link>
+                            <Link to="/contact">Contact Us</Link>
+                            <Link to="/" onClick={handleLogout}>
+                                Log Out
+                            </Link>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="/login">Login</Link>
+                            <Link to="/signup">Sign Up</Link>
+                        </>
+                    )}
+                </div>
                 
-                {auth.token && <Link to="/create-fundraiser">New Fundraiser</Link>}
-                <Link to="/contact">Contact Us</Link>
-                {auth.token ? (
-                    <Link to="/" onClick={handleLogout}>
-                        Log Out
-                    </Link>
-                ) : (
-                    <Link to="/login">Login</Link>
+                {auth.user && (
+                    <div className="user-indicator">
+                        Logged in as: <strong>{auth.user.username}</strong>
+                    </div>
                 )}
             </nav>
             <Outlet />
-        </div>
+        </>
     );
 }
 
