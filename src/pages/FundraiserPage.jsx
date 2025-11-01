@@ -1,37 +1,89 @@
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import useFundraiser from "../hooks/use-fundraiser";
+import PledgeForm from "../components/PledgeForm";
+import "./FundraiserPage.css";
 
 function FundraiserPage() {
-    // Here we use a hook that comes for free in react router called `useParams` to get the id from the URL so that we can pass it to our useFundraiser hook.
-const { id } = useParams();
-   // useFundraiser returns three pieces of info, so we need to grab them all here
-const { fundraiser, isLoading, error } = useFundraiser(id); 
+    const { id } = useParams();
+    const { fundraiser, isLoading, error } = useFundraiser(id);
+    const [pledges, setPledges] = useState([]);
 
-if (isLoading) {
-    return (<p>loading...</p>)
-}
+    // When fundraiser loads, store pledges locally
+    useEffect(() => {
+        if (fundraiser && fundraiser.pledges) {
+            setPledges(fundraiser.pledges);
+        }
+    }, [fundraiser]);
 
-if (error) {
-    return (<p>{error.message}</p>)
-}
+    // Handle new pledge creation without page refresh
+    const handlePledgeSuccess = (newPledge) => {
+        setPledges((prev) => [newPledge, ...prev]); // add to the top
+    };
 
-return (
-    <div>
-        <h2>{fundraiser.title}</h2>
-            <h3>Created at: {fundraiser.date_created}</h3>
-            <h3>{`Status: ${fundraiser.is_open}`}</h3>
+    // ✅ Add this: defines totals and progressPercent safely
+    let totalPledged = 0;
+    let progressPercent = 0;
+
+    if (fundraiser && pledges.length > 0) {
+        totalPledged = pledges.reduce((sum, p) => sum + p.amount, 0);
+        progressPercent = Math.min((totalPledged / fundraiser.goal) * 100, 100);
+    }
+
+    if (isLoading) return <p>Loading...</p>;
+    if (error) return <p>{error.message}</p>;
+
+    return (
+        <div className="page-wrap">
+            <h2>{fundraiser.title}</h2>
+            <h3>Created on: {new Date(fundraiser.date_created).toLocaleString()}</h3>
+            <p><strong>Status:</strong> {fundraiser.is_open ? "Open" : "Closed"}</p>
+
+            <img
+                src={fundraiser.image}
+                alt={fundraiser.title}
+                className="fundraiser-image"
+            />
+
+            {/* ✅ Progress bar */}
+            <div className="progress-container">
+                <div
+                    className="progress-bar"
+                    style={{ width: `${progressPercent}%` }}
+                />
+            </div>
+            <p>
+                <strong>Total pledged:</strong> ${totalPledged.toFixed(2)} of $
+                {fundraiser.goal} ({progressPercent.toFixed(1)}%)
+            </p>
+
+            <p><strong>Fundraiser Description:</strong> {fundraiser.description}</p>
+            <h3>Goal: ${fundraiser.goal}</h3>
+
+            <hr />
+
+            {/* ✅ Dynamic pledge list */}
             <h3>Pledges:</h3>
-            <ul>
-                {fundraiser.pledges.map((pledgeData, key) => {
-                return (
-                    <li key={key}>
-                        {pledgeData.amount} from {pledgeData.supporter}
-                    </li>
-                );
-            })}
-        </ul>
-    </div>
-);
+            {pledges.length > 0 ? (
+                <ul>
+                    {pledges.map((pledge, index) => (
+                        <li key={index}>
+                            ${pledge.amount} from{" "}
+                            {pledge.anonymous ? "Anonymous" : pledge.supporter}
+                            {pledge.comment && <span> — “{pledge.comment}”</span>}
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No pledges yet. Be the first to support!</p>
+            )}
+
+            <hr />
+
+            {/* ✅ Corrected closing tag */}
+            <PledgeForm fundraiserId={fundraiser.id} onSuccess={handlePledgeSuccess} />
+        </div>
+    );
 }
 
 export default FundraiserPage;
