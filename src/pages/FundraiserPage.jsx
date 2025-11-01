@@ -67,7 +67,7 @@ function FundraiserPage() {
             {pledges.length > 0 ? (
                 <ul>
                     {pledges.map((pledge, index) => (
-                        <li key={index}>
+                        <li key={pledge.id ?? `${pledge.supporter}-${pledge.amount}-${index}`}>
                             ${pledge.amount} from{" "}
                             {pledge.anonymous ? "Anonymous" : pledge.supporter}
                             {pledge.comment && <span> — “{pledge.comment}”</span>}
