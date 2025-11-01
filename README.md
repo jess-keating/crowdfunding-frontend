@@ -14,3 +14,92 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+# LightUp Front End
+Jessica Keating
+
+## Overview
+**LightUp** is a crowdfunding web application that allows community groups, schools, theatres, and event organisers to raise funds for lighting, sound, and stage production needs.  
+This repository contains the **React frontend**, which connects to the Django REST Framework **backend API**.  
+
+The frontend is built with **React + Vite**, featuring dynamic routing, responsive design, and integration with the backend endpoints to manage users, fundraisers, and pledges.
+
+---
+
+## Planning
+### Concept/Name
+**LightUp** – a play on the theme of “lighting up” community creativity and connection.  
+The app helps bring local productions and events to life by connecting organisers with supporters who can fund their lighting and sound needs.
+
+### Intended Audience
+- Community theatre groups needing lighting or sound hire  
+- School production teams seeking help for AV equipment  
+- Local event organisers raising funds for staging or effects  
+- Supporters wanting to directly contribute to creative, local events  
+
+### Core User Stories
+1. As a **visitor**, I can view open fundraisers to discover local projects.  
+2. As a **supporter**, I can log in and pledge to a fundraiser.  
+3. As a **supporter**, I can choose to pledge anonymously.  
+4. As a **fundraiser owner**, I can create, edit, or close my fundraisers.  
+5. As a **user**, I can sign up and log in securely.  
+
+---
+
+## Technical Details
+### Tech Stack
+- **Frontend Framework:** React (Vite)  
+- **Routing:** React Router DOM  
+- **State Management:** React Context + Hooks  
+- **HTTP Client:** Fetch API  
+- **Backend API:** Django REST Framework (Heroku Deployment)  
+- **Deployment:** Netlify  
+
+### Folder Structure
+src/
+├── components/ # Reusable UI components
+├── pages/ # Individual page components (Home, FundraiserPage, etc.)
+├── hooks/ # Custom hooks (e.g. useFundraiser, useAuth)
+├── context/ # Global AuthContext for user state
+├── assets/ # Images and static files
+├── App.jsx # Root app component with routing
+├── main.jsx # Entry point for ReactDOM
+└── styles.css # Base styling
+
+
+---
+
+## Front End Pages & Functionality
+- **Home Page**
+  - Displays all open fundraisers.
+  - Highlights featured campaigns.
+  - Links to login/signup or individual fundraiser pages.
+
+- **Fundraiser Detail Page**
+  - Shows full fundraiser description, goal, and progress bar.
+  - Displays list of pledges (including anonymous ones).
+  - Pledge form for logged-in users.
+
+- **Create Fundraiser Page**
+  - Form for logged-in users to create new fundraisers.
+  - Input validation and error handling.
+
+- **Sign Up / Log In Page**
+  - Combined authentication interface for new and returning users.
+  - Token-based login handled via Django API.
+  - Automatically updates NavBar on successful login.
+
+- **NavBar**
+  - Dynamically displays links based on authentication state.
+  - Hides “Sign Up” link if user is logged in.
+
+---
+
+## Integration with Backend
+### Deployment
+
+Frontend Deployment:
+https://lightup-frontend.netlify.app
+
+Backend API (Heroku):
+https://lightup-38603a824c6f.herokuapp.com
