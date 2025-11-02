@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/use-auth"; // ✅ Import useAuth
 import postSignup from "../api/post-signup";
 import postLogin from "../api/post-login";
 import "./AuthForm.css";
 
 function SignupForm() {
     const navigate = useNavigate();
+    const { setAuth } = useAuth(); // ✅ Get setAuth from context
     const [formData, setFormData] = useState({
         username: "",
         password: "",
@@ -43,11 +45,24 @@ function SignupForm() {
             // ✅ Step 2: Immediately log in
             const loginResponse = await postLogin(formData.username, formData.password);
 
-            // ✅ Step 3: Store token
-            window.localStorage.setItem("token", loginResponse.token);
+            // ✅ Step 3: Build user object
+            const user = {
+                id: loginResponse.user_id,
+                email: loginResponse.email,
+                username: formData.username,
+            };
 
-            // ✅ Step 4: Success feedback
-            alert("Signup successful! You’re now logged in.");
+            // ✅ Step 4: Store token AND user in localStorage
+            window.localStorage.setItem("token", loginResponse.token);
+            window.localStorage.setItem("user", JSON.stringify(user));
+
+            // ✅ Step 5: Update auth context
+            setAuth({
+                token: loginResponse.token,
+                user: user,
+            });
+
+            // ✅ Step 6: Navigate to home
             navigate("/");
         } catch (err) {
             console.error("Signup or login failed:", err);
