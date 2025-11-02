@@ -3,34 +3,32 @@ import FundraiserCard from "../components/FundraiserCard";
 import "./HomePage.css";
 
 function HomePage() {
-    const { fundraisers, isLoading, error, refetch } = useFundraisers();
+    const { fundraisers, isLoading, error } = useFundraisers();
 
     if (isLoading) {
-        return (
-            <div className="page-wrap">
-                <div className="muted">Loading fundraisers…</div>
-            </div>
-        );
+        return <p>Loading...</p>;
     }
 
     if (error) {
-        return (
-            <div className="page-wrap">
-                <div role="alert">
-                    <p className="muted">Error loading fundraisers: {error.message}</p>
-                        <button onClick={refetch} disabled={isLoading}>
-                            {isLoading ? "Retrying…" : "Retry"}
-                        </button>
-                </div>
-            </div>
-        );
+        return <p>Error: {error.message}</p>;
     }
+
+    // Sort fundraisers by date_created (newest first)
+    const sortedFundraisers = [...fundraisers].sort((a, b) => {
+        return new Date(b.date_created) - new Date(a.date_created);
+    });
 
     return (
         <div className="page-wrap">
-            <div id="fundraiser-list">
-                {fundraisers.map((fundraiserData, key) => {
-                    return <FundraiserCard key={key} fundraiserData={fundraiserData} />;
+            <h1>Fundraisers</h1>
+            <div className="fundraiser-grid">
+                {sortedFundraisers.map((fundraiserData, key) => {
+                    return (
+                        <FundraiserCard
+                            key={key}
+                            fundraiserData={fundraiserData}
+                        />
+                    );
                 })}
             </div>
         </div>

@@ -2,9 +2,9 @@ import { useState, useCallback } from "react";
 import postFundraiser from "../api/post-fundraiser";
 
 export default function useCreateFundraiser() {
-const [isLoading, setIsLoading] = useState(false);
-const [error, setError] = useState(null);
-const [success, setSuccess] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
 
 const createFundraiser = useCallback(async (formData) => {
     setIsLoading(true);

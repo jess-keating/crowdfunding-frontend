@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useCreatePledge from "../hooks/use-create-pledge";
+import "./PledgeForm.css";
 
 function PledgeForm({ fundraiserId, onSuccess }) {
     const [formData, setFormData] = useState({
@@ -29,29 +30,30 @@ function PledgeForm({ fundraiserId, onSuccess }) {
         try {
             const newPledge = await createPledge({ ...formData, fundraiser: fundraiserId });
             setFormData({ amount: "", comment: "", anonymous: false });
-            if (onSuccess) onSuccess(newPledge); // ✅ Pass new pledge object up
+            if (onSuccess) onSuccess(newPledge);
         } catch {
             // handled by hook
         }
     };
 
-
     return (
         <form onSubmit={handleSubmit} className="pledge-form">
             <h3>Make a Pledge</h3>
 
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            {success && <p style={{ color: "green" }}>{success}</p>}
+            {error && <p className="error-message" style={{ color: "red" }}>{error}</p>}
+            {success && <p className="success-message" style={{ color: "green" }}>{success}</p>}
 
             <div>
                 <label htmlFor="amount">Amount ($)</label>
                 <input
                     type="number"
                     id="amount"
-                    placeholder="Enter your pledge"
+                    placeholder="Enter pledge amount"
                     value={formData.amount}
                     onChange={handleChange}
                     required
+                    min="1"
+                    step="0.01"
                 />
             </div>
 
@@ -67,7 +69,7 @@ function PledgeForm({ fundraiserId, onSuccess }) {
             </div>
 
             <div>
-                <label htmlFor="anonymous">
+                <label>
                     <input
                         type="checkbox"
                         id="anonymous"
