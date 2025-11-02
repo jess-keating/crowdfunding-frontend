@@ -91,3 +91,28 @@ https://lightup-frontend.netlify.app
 
 Backend API (Heroku):
 https://lightup-38603a824c6f.herokuapp.com
+
+---
+
+## Frontend Screenshots
+
+Homepage while not logged in as a user.
+![](src/images/homepage-not-logged-in.png) 
+
+Homepage when logged in. SHow username in the navbar on the right. 
+![](src/images/homepage-logged-in.png)
+
+Login page.
+![](src/images/login-page.png)
+
+Signup page.
+![](src/images/signup-page.png)
+
+Fundraiser page while not logged in as a user.
+![](src/images/fundraiser-page-not-logged-in.png)
+
+Fundraiser page while not logged in as a user, zoomed out to show the pledges form.
+![](src/images/fundraiser-page-zoomed-out-not-logged-in.png)
+
+Fundraiser page while logged in as a user, the user that is the owner of the fundraiser. The buttons for Close and Update Fundriaser will only show if the logged in user is the owner of that fundraiser. Therefore, there is no error that I can show for an attempt to update if not the owner. 
+![](src/images/fundraiser-page-logged-in.png)
